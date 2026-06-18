@@ -8,7 +8,7 @@ Login credentials for the shared team Canvas instance. All accounts use the `@te
 
 | Email | Password |
 |-------|----------|
-| `scott@team1.test` | `Team1scott!` |
+| `fob@team1.test` | `Team1fob!` |
 | `belize@team1.test` | `Team1belize!` |
 | `ta1@team1.test` | `Team1ta1!` |
 | `james@team1.test` | `Team1james!` |
@@ -18,7 +18,7 @@ Login credentials for the shared team Canvas instance. All accounts use the `@te
 
 | Login | Display name | Password | Courses |
 |-------|--------------|----------|---------|
-| `scott@team1.test` | Scott | `Team1scott!` | COSC315, COSC304, COSC111 |
+| `fob@team1.test` | Fob | `Team1fob!` | COSC315, COSC304, COSC111 |
 | `belize@team1.test` | Belize | `Team1belize!` | COSC499 |
 | `laris@team1.test` | Laris | `Team1laris!` | COSC320, COSC310 |
 
@@ -56,9 +56,9 @@ Student numbering and course assignment:
 
 | Course | Code | Teacher | Students (`studentNNN`) | Count |
 |--------|------|---------|---------------------------|-------|
-| Introduction to Operating Systems | COSC315 | scott | 001–300 | 300 |
-| Introduction to Databases | COSC304 | scott | 301–600 | 300 |
-| Computer Programming I | COSC111 | scott | 601–625 | 25 |
+| Introduction to Operating Systems | COSC315 | fob | 001–300 | 300 |
+| Introduction to Databases | COSC304 | fob | 301–600 | 300 |
+| Computer Programming I | COSC111 | fob | 601–625 | 25 |
 | Software Engineering Capstone | COSC499 | belize | 626–699 | 74 |
 | Analysis of Algorithms | COSC320 | laris | 700–724 | 25 |
 | Software Engineering | COSC310 | laris | 725–749 | 25 |

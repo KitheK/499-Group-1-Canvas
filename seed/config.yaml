@@ -2,8 +2,8 @@ password_pattern: "Team1{local_part}!"
 synthetic_student_password: "Team1student!"
 
 teachers:
-  - login: scott@team1.test
-    name: Scott
+  - login: fob@team1.test
+    name: Fob
     courses: [COSC315, COSC304, COSC111]
   - login: belize@team1.test
     name: Belize
@@ -50,17 +50,17 @@ courses:
   - sis_id: COSC315
     code: COSC315
     name: Introduction to Operating Systems
-    teacher: scott@team1.test
+    teacher: fob@team1.test
     student_range: [1, 300]
   - sis_id: COSC304
     code: COSC304
     name: Introduction to Databases
-    teacher: scott@team1.test
+    teacher: fob@team1.test
     student_range: [301, 600]
   - sis_id: COSC111
     code: COSC111
     name: Computer Programming I
-    teacher: scott@team1.test
+    teacher: fob@team1.test
     student_range: [601, 625]
   - sis_id: COSC499
     code: COSC499

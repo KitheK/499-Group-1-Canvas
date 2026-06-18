@@ -22,8 +22,8 @@ After seeding, open `seed/output/credentials.json` (gitignored) on the droplet o
   "canvas_url": "http://<droplet-ip>",
   "teachers": [
     {
-      "email": "scott@team1.test",
-      "password": "Team1scott!",
+      "email": "fob@team1.test",
+      "password": "Team1fob!",
       "api_token": "..."
     }
   ]
@@ -34,7 +34,7 @@ Use a teacher's `api_token` in the capstone **canvas-service** configuration.
 
 ### Recommended test account
 
-**`scott@team1.test`** — teaches three courses (COSC315, COSC304, COSC111) and is the best choice for multi-course dashboard testing.
+**`fob@team1.test`** — teaches three courses (COSC315, COSC304, COSC111) and is the best choice for multi-course dashboard testing.
 
 Other teachers:
 

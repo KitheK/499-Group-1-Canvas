@@ -1,7 +1,7 @@
 from scripts.lib.passwords import password_for_login, synthetic_student_password
 
 def test_teacher_password():
-    assert password_for_login("scott@team1.test") == "Team1scott!"
+    assert password_for_login("fob@team1.test") == "Team1fob!"
 
 def test_team_member_password():
     assert password_for_login("al-ameen@team1.test") == "Team1al-ameen!"
