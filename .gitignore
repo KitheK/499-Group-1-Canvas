@@ -1,0 +1,6 @@
+.env
+canvas-lms/
+seed/output/credentials.json
+__pycache__/
+.pytest_cache/
+.venv/
