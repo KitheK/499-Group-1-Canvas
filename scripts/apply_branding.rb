@@ -5,7 +5,7 @@
 PRIMARY = ENV.fetch("GROUP1_PRIMARY_COLOR", "#c75087")
 INSTITUTION_NAME = ENV.fetch("GROUP1_INSTITUTION_NAME", "Canvas LMS Group 1")
 THEME_NAME = ENV.fetch("GROUP1_THEME_NAME", "Group 1 Canvas Theme")
-WELCOME_HEADING = ENV.fetch("GROUP1_WELCOME_HEADING", "Welcome back")
+WELCOME_HEADING = ENV.fetch("GROUP1_WELCOME_HEADING", "Welcome to Team 1 Canvas")
 WELCOME_SUBTITLE = ENV.fetch("GROUP1_WELCOME_SUBTITLE", "Please enter your details to sign in.")
 
 JS_OVERRIDES = <<~JS.squish
