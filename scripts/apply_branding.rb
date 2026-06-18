@@ -33,6 +33,7 @@ theme = BrandConfig.new(
   js_overrides: JS_OVERRIDES,
 )
 theme.save_unless_dup!
+theme.save_all_files!
 
 account = Account.default
 account.name = INSTITUTION_NAME
