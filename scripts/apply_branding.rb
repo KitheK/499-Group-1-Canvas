@@ -10,57 +10,66 @@ WELCOME_SUBTITLE = ENV.fetch("GROUP1_WELCOME_SUBTITLE", "Please enter your detai
 
 JS_OVERRIDES = <<~JS.squish
   (function () {
-    document.title = '#{INSTITUTION_NAME}';
+    function group1ApplyLoginBranding() {
+      document.title = '#{INSTITUTION_NAME}';
 
-    if (!document.querySelector('.group1-page-brand')) {
-      var pageBrand = document.createElement('div');
-      pageBrand.className = 'group1-page-brand';
-      pageBrand.textContent = '#{INSTITUTION_NAME}';
-      document.body.insertBefore(pageBrand, document.body.firstChild);
+      if (!document.querySelector('.group1-page-brand')) {
+        var pageBrand = document.createElement('div');
+        pageBrand.className = 'group1-page-brand';
+        pageBrand.textContent = '#{INSTITUTION_NAME}';
+        document.body.insertBefore(pageBrand, document.body.firstChild);
+      }
+
+      var inner = document.querySelector('.ic-Login__innerContent');
+      if (!inner) return;
+
+      var logoWrap = inner.querySelector('.ic-Login-header__logo');
+      if (logoWrap) logoWrap.style.display = 'none';
+      var headerLinks = inner.querySelector('.ic-Login-header__links');
+      if (headerLinks) headerLinks.style.display = 'none';
+      var header = inner.querySelector('.ic-Login-header');
+      if (header) header.style.display = 'none';
+
+      if (!document.querySelector('.group1-login-welcome')) {
+        var welcome = document.createElement('div');
+        welcome.className = 'group1-login-welcome';
+        welcome.innerHTML =
+          '<h1>#{WELCOME_HEADING}</h1>' +
+          '<p>#{WELCOME_SUBTITLE}</p>';
+        var body = inner.querySelector('.ic-Login__body');
+        if (body) inner.insertBefore(welcome, body);
+      }
+
+      var loginBtn = document.querySelector('#login_form input[type=submit], #login_form .Button--login');
+      if (loginBtn) loginBtn.value = 'Sign in';
+
+      var footer = document.querySelector('.ic-Login-footer');
+      if (footer && !document.querySelector('.group1-login-footer')) {
+        footer.innerHTML =
+          '<div class="group1-login-footer">' +
+            '<div class="group1-login-footer__left">' +
+              '<strong>#{INSTITUTION_NAME}</strong>' +
+              '<span>&copy; ' + new Date().getFullYear() + ' #{INSTITUTION_NAME}. All rights reserved.</span>' +
+            '</div>' +
+            '<div class="group1-login-footer__links">' +
+              '<a href="#">Help</a>' +
+              '<a href="#">Privacy Policy</a>' +
+              '<a href="#">Terms of Service</a>' +
+            '</div>' +
+          '</div>';
+      }
     }
 
-    var inner = document.querySelector('.ic-Login__innerContent');
-    if (!inner) return;
-
-    var logoWrap = inner.querySelector('.ic-Login-header__logo');
-    if (logoWrap) logoWrap.style.display = 'none';
-    var headerLinks = inner.querySelector('.ic-Login-header__links');
-    if (headerLinks) headerLinks.style.display = 'none';
-    var header = inner.querySelector('.ic-Login-header');
-    if (header) header.style.display = 'none';
-
-    if (!document.querySelector('.group1-login-welcome')) {
-      var welcome = document.createElement('div');
-      welcome.className = 'group1-login-welcome';
-      welcome.innerHTML =
-        '<h1>#{WELCOME_HEADING}</h1>' +
-        '<p>#{WELCOME_SUBTITLE}</p>';
-      var body = inner.querySelector('.ic-Login__body');
-      if (body) inner.insertBefore(welcome, body);
-    }
-
-    var loginBtn = document.querySelector('#login_form input[type=submit], #login_form .Button--login');
-    if (loginBtn) loginBtn.value = 'Sign in';
-
-    var footer = document.querySelector('.ic-Login-footer');
-    if (footer && !document.querySelector('.group1-login-footer')) {
-      footer.innerHTML =
-        '<div class="group1-login-footer">' +
-          '<div class="group1-login-footer__left">' +
-            '<strong>#{INSTITUTION_NAME}</strong>' +
-            '<span>&copy; ' + new Date().getFullYear() + ' #{INSTITUTION_NAME}. All rights reserved.</span>' +
-          '</div>' +
-          '<div class="group1-login-footer__links">' +
-            '<a href="#">Help</a>' +
-            '<a href="#">Privacy Policy</a>' +
-            '<a href="#">Terms of Service</a>' +
-          '</div>' +
-        '</div>';
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', group1ApplyLoginBranding);
+    } else {
+      group1ApplyLoginBranding();
     }
   })();
 JS
 
 CSS_OVERRIDES = <<~CSS
+  /* group1-login-overrides */
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
   .ic-Login-Body,
@@ -331,19 +340,119 @@ vars["ic-brand-Login-body-bgd-color"] = "#fff8f8"
 vars["ic-brand-Login-Content-bgd-color"] = "#ffffff"
 vars["ic-brand-Login-Content-border-color"] = "#e5e7eb"
 
-theme = BrandConfig.new(
+# Static assets load after Canvas login CSS and avoid broken global_includes injection
+# (Canvas puts css_overrides/js_overrides into href/src attributes, which browsers ignore).
+public_dir = Rails.root.join("public", "group1")
+FileUtils.mkdir_p(public_dir)
+css_public = public_dir.join("login-overrides.css")
+js_public = public_dir.join("login-overrides.js")
+css_public.write(CSS_OVERRIDES)
+js_public.write(JS_OVERRIDES)
+
+course_card_names = begin
+  JSON.parse(File.read("/tmp/group1-course-cards/images.json"))
+rescue Errno::ENOENT, JSON::ParserError
+  %w[sanrio-beach.png four-forty-four.png mother-field.png kitten-throne.png hype-face.png]
+end
+
+cards_public = public_dir.join("course-cards")
+FileUtils.mkdir_p(cards_public)
+cards_public.join("images.json").write(JSON.pretty_generate(course_card_names) + "\n")
+
+assets_src = Pathname("/tmp/group1-course-cards")
+course_card_names.each do |filename|
+  src = assets_src.join(filename)
+  dest = cards_public.join(filename)
+  next unless src.exist?
+
+  FileUtils.cp(src, dest) if !dest.exist? || src.mtime > dest.mtime
+end
+
+image_urls = course_card_names.map { |name| "/group1/course-cards/#{name}" }
+dashboard_js = <<~JS
+  (function () {
+    var IMAGES = #{image_urls.to_json};
+
+    function applyCourseCardImages() {
+      document.querySelectorAll('.ic-DashboardCard').forEach(function (card, index) {
+        var imageUrl = IMAGES[index % IMAGES.length];
+        var imageHeader = card.querySelector('.ic-DashboardCard__header_image');
+        if (imageHeader) {
+          imageHeader.style.backgroundImage = 'url(' + imageUrl + ')';
+          imageHeader.style.backgroundSize = 'cover';
+          imageHeader.style.backgroundPosition = 'center';
+          return;
+        }
+
+        var hero = card.querySelector('.ic-DashboardCard__header_hero');
+        if (hero) {
+          hero.style.backgroundImage = 'url(' + imageUrl + ')';
+          hero.style.backgroundSize = 'cover';
+          hero.style.backgroundPosition = 'center';
+        }
+      });
+    }
+
+    function initDashboardOverrides() {
+      applyCourseCardImages();
+      var dashboard = document.getElementById('dashboard') || document.body;
+      new MutationObserver(applyCourseCardImages).observe(dashboard, {
+        childList: true,
+        subtree: true,
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initDashboardOverrides);
+    } else {
+      initDashboardOverrides();
+    }
+  })();
+JS
+
+dashboard_public = public_dir.join("dashboard-overrides.js")
+dashboard_public.write(dashboard_js)
+
+LOADER_JS = <<~JS.squish
+  (function () {
+    var stamp = '#{Time.now.to_i}';
+    var css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = '/group1/login-overrides.css?v=' + stamp;
+    document.head.appendChild(css);
+
+    var loginJs = document.createElement('script');
+    loginJs.src = '/group1/login-overrides.js?v=' + stamp;
+    loginJs.defer = true;
+    document.head.appendChild(loginJs);
+
+    var dashboardJs = document.createElement('script');
+    dashboardJs.src = '/group1/dashboard-overrides.js?v=' + stamp;
+    dashboardJs.defer = true;
+    document.head.appendChild(dashboardJs);
+  })();
+JS
+
+theme = BrandConfig.for(
   variables: vars,
   share: false,
   name: THEME_NAME,
-  js_overrides: JS_OVERRIDES,
-  css_overrides: CSS_OVERRIDES,
 )
-theme.save_unless_dup!
+theme.save! unless theme.persisted?
 theme.save_all_files!
+
+# Append loader to compiled brand JS (always loaded on login); strip any prior patch.
+js_path = theme.js_file
+base_js = js_path.read.sub(/\n\/\* group1-login-loader \*\/\n?[\s\S]*\z/, "\n")
+js_path.write(base_js + "\n/* group1-login-loader */\n" + LOADER_JS + "\n")
 
 account = Account.default
 account.name = INSTITUTION_NAME
 account.brand_config_md5 = theme.md5
+account.settings[:global_includes] = false
 account.save!
 
 puts "Applied branding: #{account.name} (#{PRIMARY}) md5=#{theme.md5}"
+puts "Static assets: /group1/login-overrides.css, /group1/login-overrides.js, /group1/dashboard-overrides.js"
+puts "Course card images: #{course_card_names.join(', ')}"
+puts "Loader patched: #{js_path}"

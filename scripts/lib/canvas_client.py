@@ -20,6 +20,11 @@ class CanvasClient:
         r.raise_for_status()
         return r.json()
 
+    def put(self, path: str, payload: dict):
+        r = self.session.put(self._url(path), json=payload, timeout=60)
+        r.raise_for_status()
+        return r.json()
+
     def find_user_by_login(self, login: str):
         users = self.get("/accounts/self/users", search_term=login)
         for u in users:
