@@ -1,0 +1,80 @@
+password_pattern: "Team1{local_part}!"
+synthetic_student_password: "Team1student!"
+
+teachers:
+  - login: scott@team1.test
+    name: Scott
+    courses: [COSC315, COSC304, COSC111]
+  - login: belize@team1.test
+    name: Belize
+    courses: [COSC499]
+  - login: laris@team1.test
+    name: Laris
+    courses: [COSC320, COSC310]
+
+tas:
+  - login: ta1@team1.test
+    name: TA 1
+    course: COSC315
+  - login: ta2@team1.test
+    name: TA 2
+    course: COSC304
+  - login: ta3@team1.test
+    name: TA 3
+    course: COSC499
+  - login: ta4@team1.test
+    name: TA 4
+    course: COSC111
+
+team_members:
+  - login: james@team1.test
+    name: James Birnie
+    course: COSC499
+  - login: carson@team1.test
+    name: Carson Bennett
+    course: COSC499
+  - login: al-ameen@team1.test
+    name: Al-Ameen Oludare
+    course: COSC499
+  - login: armaan@team1.test
+    name: Armaan Cheema
+    course: COSC499
+  - login: hakim@team1.test
+    name: Hakim Rashid
+    course: COSC499
+  - login: kithe@team1.test
+    name: Kithe Kisia
+    course: COSC499
+
+courses:
+  - sis_id: COSC315
+    code: COSC315
+    name: Introduction to Operating Systems
+    teacher: scott@team1.test
+    student_range: [1, 300]
+  - sis_id: COSC304
+    code: COSC304
+    name: Introduction to Databases
+    teacher: scott@team1.test
+    student_range: [301, 600]
+  - sis_id: COSC111
+    code: COSC111
+    name: Computer Programming I
+    teacher: scott@team1.test
+    student_range: [601, 625]
+  - sis_id: COSC499
+    code: COSC499
+    name: Software Engineering Capstone
+    teacher: belize@team1.test
+    student_range: [626, 699]
+    team_members: true
+  - sis_id: COSC320
+    code: COSC320
+    name: Analysis of Algorithms
+    teacher: laris@team1.test
+    student_range: [700, 724]
+  - sis_id: COSC310
+    code: COSC310
+    name: Software Engineering
+    teacher: laris@team1.test
+    student_range: [725, 749]
