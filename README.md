@@ -6,6 +6,7 @@ Team-shared Canvas LMS deployment wrapper for capstone testing.
 
 - [Deployment guide](docs/DEPLOY.md)
 - [Team access](docs/TEAM_ACCESS.md)
+- [Capstone connection](docs/CAPSTONE_CONNECTION.md)
 
 ## Note
 
