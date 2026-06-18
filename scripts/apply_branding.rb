@@ -1,25 +1,37 @@
 # Apply Group 1 Canvas institution name and brand colors.
 # Run inside canvas-lms-web container:
-#   bundle exec rails runner /path/to/apply_branding.rb
-# Or from host:
-#   docker exec canvas-lms-web-1 bundle exec rails runner /usr/src/app/../apply_branding.rb
+#   docker cp scripts/apply_branding.rb canvas-lms-web-1:/tmp/apply_branding.rb
+#   docker exec canvas-lms-web-1 bundle exec rails runner /tmp/apply_branding.rb
 
 PRIMARY = ENV.fetch("GROUP1_PRIMARY_COLOR", "#c75087")
 INSTITUTION_NAME = ENV.fetch("GROUP1_INSTITUTION_NAME", "Group 1 Canvas")
 THEME_NAME = ENV.fetch("GROUP1_THEME_NAME", "Group 1 Canvas Theme")
 
+JS_OVERRIDES = <<~JS.squish
+  document.title = '#{INSTITUTION_NAME}';
+  var logo = document.querySelector('.ic-Login-header__logo img');
+  if (logo) { logo.alt = '#{INSTITUTION_NAME}'; }
+JS
+
 base = BrandConfig.first
 raise "No base BrandConfig found" unless base
 
 vars = base.variables.deep_dup
-vars["ic-brand-primary"] = PRIMARY
-vars["ic-brand-Login-Content-button-bgd"] = PRIMARY
-vars["ic-brand-Login-footer-link-color"] = PRIMARY
-vars["ic-link-color"] = PRIMARY
-vars["ic-brand-global-nav-logo-bgd"] = PRIMARY
-vars["ic-brand-button--primary-bgd"] = PRIMARY
+[
+  "ic-brand-primary",
+  "ic-brand-Login-Content-button-bgd",
+  "ic-brand-Login-footer-link-color",
+  "ic-link-color",
+  "ic-brand-global-nav-logo-bgd",
+  "ic-brand-button--primary-bgd",
+].each { |key| vars[key] = PRIMARY }
 
-theme = BrandConfig.new(variables: vars, share: false, name: THEME_NAME)
+theme = BrandConfig.new(
+  variables: vars,
+  share: false,
+  name: THEME_NAME,
+  js_overrides: JS_OVERRIDES,
+)
 theme.save_unless_dup!
 
 account = Account.default
